@@ -1,0 +1,153 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head>
+   
+    <title>Pixel Museum | A World of Digital Art</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+   
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg museum-nav">
+    <div class="container">
+        <a class="navbar-brand" href="/">Pixel<span>Museum.</span></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#museumMenu" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="museumMenu">
+            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-4">
+                
+{% if user.is_authenticated %}
+    <li class="nav-item">
+        <span class="nav-link">Hi, {{ user.username }}!</span>
+    </li>
+    <li class="nav-item">
+        <a class="btn museum-btn" href="{% url 'logout' %}">Logout</a>
+    </li>
+{% else %}
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'login' %}">Login</a>
+    </li>
+    <li class="nav-item">
+        <a class="btn outline-btn" href="{% url 'signup' %}">Sign Up</a>
+    </li>
+{% endif %}
+
+                <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="#gallery">Gallery</a></li>
+                <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+                <li class="nav-item">
+                    <a class="btn museum-btn" href="#gallery">Explore Art ↗</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<header class="hero container" id="home">
+    <div class="row align-items-center g-5">
+        <div class="col-lg-6">
+            <p class="eyebrow">✳ YOUR DIGITAL ART DESTINATION</p>
+            <h1>Every pixel<br>has a <span>story.</span></h1>
+            <p class="hero-text">
+                Discover a little world of creativity. Explore digital
+                masterpieces, celebrate artists, and turn your imagination
+                into something extraordinary.
+            </p>
+            <div class="d-flex gap-3 flex-wrap">
+                <a href="{% url 'gallery' %}" class="btn museum-btn">Explore Gallery ↗</a>
+                <a href="#about" class="btn outline-btn">Discover our world</a>
+            </div>
+            <div class="hero-note">
+                <span>✦</span> A small museum for big imaginations.
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="art-scene">
+                <div class="sun"></div>
+                <div class="mountain mountain-back"></div>
+                <div class="mountain mountain-front"></div>
+                <div class="pixel-flower">✿</div>
+                <div class="art-label">NO. 001 — DREAMSCAPE</div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section class="gallery-section" id="gallery">
+    <div class="container py-5">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">THE COLLECTION</p>
+                <h2>Little worlds, <span>big feelings.</span></h2>
+            </div>
+            <p>Art comes in every shape, shade and pixel.</p>
+        </div>
+
+        <div class="row g-4 mt-2">
+            <div class="col-md-4">
+                <article class="art-card">
+                    <div class="art-preview preview-sunset">
+                        <span>☀</span><div class="preview-hills"></div>
+                    </div>
+                    <div class="art-info">
+                        <div><h3>Golden Hour</h3><p>Pixel landscape</p></div>
+                        <span class="art-number">01</span>
+                    </div>
+                </article>
+            </div>
+            <div class="col-md-4">
+                <article class="art-card">
+                    <div class="art-preview preview-garden">
+                        <span>✿</span><span>✿</span><span>❋</span>
+                    </div>
+                    <div class="art-info">
+                        <div><h3>Secret Garden</h3><p>Pixel nature</p></div>
+                        <span class="art-number">02</span>
+                    </div>
+                </article>
+            </div>
+            <div class="col-md-4">
+                <article class="art-card">
+                    <div class="art-preview preview-night">
+                        <span>☾</span><span>✦</span><span>✧</span>
+                    </div>
+                    <div class="art-info">
+                        <div><h3>Quiet Nights</h3><p>Pixel fantasy</p></div>
+                        <span class="art-number">03</span>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="about-section container py-5" id="about">
+    <p class="eyebrow">MORE THAN JUST ART</p>
+    <h2>A space to create.<br><span>A place to belong.</span></h2>
+    <p>
+        Pixel Museum brings digital art and imagination together.
+        Our vision is to give creators a welcoming space to share,
+        discover and celebrate the little details that make art special.
+    </p>
+</section>
+
+<footer class="museum-footer">
+    <div class="container d-flex justify-content-between flex-wrap gap-2">
+        <span class="navbar-brand">Pixel<span>Museum.</span></span>
+        <p>Made with imagination ✳ © 2026 Pixel Museum</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

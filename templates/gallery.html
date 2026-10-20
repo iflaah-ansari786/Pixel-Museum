@@ -1,0 +1,354 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Art Gallery | Pixel Museum</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <style>
+        :root {
+            --cream: #fff8ed;
+            --terracotta: #bd674d;
+            --sage: #87977a;
+            --dark: #352d29;
+            --light: #f4e7d5;
+        }
+
+        body {
+            background: var(--cream);
+            color: var(--dark);
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar {
+            background: var(--cream);
+            border-bottom: 1px solid #ead9c5;
+            padding: 18px 0;
+        }
+
+        .brand {
+            color: var(--terracotta);
+            font-size: 25px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 55px 15px 30px;
+        }
+
+        .hero h1 {
+            font-size: clamp(32px, 5vw, 52px);
+            font-weight: bold;
+        }
+
+        .hero p {
+            color: #75685f;
+        }
+
+        .filter-btn {
+            border: 1px solid var(--sage);
+            border-radius: 25px;
+            background: transparent;
+            color: var(--dark);
+            padding: 9px 19px;
+            margin: 5px;
+            cursor: pointer;
+        }
+
+        .filter-btn.active,
+        .filter-btn:hover {
+            background: var(--sage);
+            color: white;
+        }
+
+        .art-card {
+            height: 100%;
+            background: white;
+            border: 1px solid #eee0cf;
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform .2s, box-shadow .2s;
+        }
+
+        .art-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px #352d2915;
+        }
+
+        .art-image {
+            height: 220px;
+            background: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .art-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .placeholder-art {
+            font-size: 65px;
+        }
+
+        .art-info {
+            padding: 18px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .art-info h3 {
+            font-size: 20px;
+            font-weight: bold;
+            overflow-wrap: anywhere;
+        }
+
+        .art-info p {
+            color: #81756b;
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .number {
+            color: var(--terracotta);
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 45px 15px;
+            color: #75685f;
+        }
+
+        .modal-content {
+            border: 0;
+            border-radius: 18px;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            background: var(--light);
+        }
+
+        .modal-title {
+            font-weight: bold;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px 10px;
+            color: #81756b;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar">
+    <div class="container d-flex justify-content-between align-items-center">
+        <a class="brand" href="{% url 'home' %}">🎨 Pixel Museum</a>
+        <a href="{% url 'pixel_maker' %}"
+           class="btn btn-outline-secondary rounded-pill">
+            Create Pixel Art
+        </a>
+    </div>
+</nav>
+
+<header class="hero">
+    <h1>Art Gallery</h1>
+    <p>Discover little worlds made one pixel at a time.</p>
+</header>
+
+<form method="get" action="{% url 'gallery' %}"
+      class="container mb-4">
+    <div class="row g-2 justify-content-center">
+        <div class="col-md-6">
+            <input
+                type="text"
+                name="search"
+                class="form-control rounded-pill"
+                placeholder="Search artwork by title..."
+                value="{{ search_query }}">
+        </div>
+
+        <div class="col-md-3">
+            <select name="category"
+                    class="form-select rounded-pill">
+                <option value="">All Categories</option>
+                <option value="Nature"
+                    {% if selected_category == "Nature" %}selected{% endif %}>
+                    Nature
+                </option>
+                <option value="Fantasy"
+                    {% if selected_category == "Fantasy" %}selected{% endif %}>
+                    Fantasy
+                </option>
+                <option value="Abstract"
+                    {% if selected_category == "Abstract" %}selected{% endif %}>
+                    Abstract
+                </option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <button type="submit"
+                    class="btn btn-dark rounded-pill w-100">
+                Search
+            </button>
+        </div>
+    </div>
+</form>
+
+
+<main class="container pb-5">
+
+    <div class="text-center mb-4">
+        <button class="filter-btn active" data-filter="all">All Artworks</button>
+        <button class="filter-btn" data-filter="nature">Nature</button>
+        <button class="filter-btn" data-filter="fantasy">Fantasy</button>
+        <button class="filter-btn" data-filter="abstract">Abstract</button>
+    </div>
+
+    <div class="row g-4" id="artwork-list">
+
+        {% for artwork in artworks %}
+        <div class="col-sm-6 col-lg-4 art-item"
+             data-category="{{ artwork.category|lower }}">
+
+            <article class="art-card"
+                     tabindex="0"
+                     role="button"
+                     data-bs-toggle="modal"
+                     data-bs-target="#artworkModal"
+                     data-title="{{ artwork.title }}"
+                     data-category="{{ artwork.category }}"
+                     data-description="{{ artwork.description }}"
+                     {% if artwork.image %}
+                     data-image="{{ artwork.image.url }}"
+                     {% endif %}>
+
+                <div class="art-image">
+                    {% if artwork.image %}
+                        <img src="{{ artwork.image.url }}"
+                             alt="{{ artwork.title }}">
+                    {% else %}
+                        <div class="placeholder-art">🎨</div>
+                    {% endif %}
+                </div>
+
+                <div class="art-info">
+                    <div>
+                        <h3>{{ artwork.title }}</h3>
+                        <p>{{ artwork.category }} · Pixel artwork</p>
+                    </div>
+                    <span class="number">#{{ artwork.id }}</span>
+                </div>
+
+            </article>
+        </div>
+
+        {% empty %}
+        <div class="col-12">
+            <div class="empty-message">
+                <h3>No artworks yet!</h3>
+                <p>Add your first artwork from the Django Admin Panel.</p>
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+</main>
+
+<footer class="footer">
+    Made with ❤️ at Pixel Museum
+</footer>
+
+<div class="modal fade" id="artworkModal" tabindex="-1"
+     aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h2 class="modal-title fs-4" id="modalTitle">Artwork</h2>
+                <button type="button" class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <img id="modalImage" src="" alt=""
+                     class="img-fluid rounded mb-3 d-none">
+
+                <p class="text-secondary mb-2" id="modalCategory"></p>
+                <p id="modalDescription"></p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    const filterButtons = document.querySelectorAll(".filter-btn");
+    const artItems = document.querySelectorAll(".art-item");
+
+    filterButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            filterButtons.forEach(btn => btn.classList.remove("active"));
+            button.classList.add("active");
+
+            const selected = button.dataset.filter;
+
+            artItems.forEach(item => {
+                const category = item.dataset.category.trim().toLowerCase();
+                item.style.display =
+                    selected === "all" || category === selected
+                    ? "" : "none";
+            });
+        });
+    });
+
+    const artworkModal = document.getElementById("artworkModal");
+
+    artworkModal.addEventListener("show.bs.modal", event => {
+        const card = event.relatedTarget;
+
+        document.getElementById("modalTitle").textContent =
+            card.dataset.title;
+
+        document.getElementById("modalCategory").textContent =
+            card.dataset.category;
+
+        document.getElementById("modalDescription").textContent =
+            card.dataset.description;
+
+        const image = document.getElementById("modalImage");
+
+        if (card.dataset.image) {
+            image.src = card.dataset.image;
+            image.alt = card.dataset.title;
+            image.classList.remove("d-none");
+        } else {
+            image.removeAttribute("src");
+            image.classList.add("d-none");
+        }
+    });
+</script>
+
+</body>
+</html>

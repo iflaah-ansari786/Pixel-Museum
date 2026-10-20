@@ -1,0 +1,145 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account | Pixel Museum</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f6f2ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .signup-card {
+            background: white;
+            width: 100%;
+            max-width: 400px;
+            padding: 32px;
+            border-radius: 18px;
+            box-shadow: 0 8px 30px #00000012;
+        }
+
+        h1 {
+            text-align: center;
+            color: #6842a6;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #777;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin: 16px 0 7px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d8cfe8;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        .signup-btn {
+            width: 100%;
+            padding: 13px;
+            margin-top: 22px;
+            border: none;
+            border-radius: 8px;
+            background: #6842a6;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .signup-btn:hover {
+            background: #503080;
+        }
+
+        .error {
+            color: #b42318;
+            background: #fff0ef;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .bottom-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+
+        a {
+            color: #6842a6;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="signup-card">
+        <h1>🎨 Join Pixel Museum</h1>
+        <p class="subtitle">Create your account and share your creativity.</p>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <label for="username">Username</label>
+            <input
+                type="text"
+                id="username"
+                name="username"
+                maxlength="150"
+                autocomplete="username"
+                required
+            >
+
+            <label for="password">Password</label>
+            <input
+                type="password"
+                id="password"
+                name="password"
+                autocomplete="new-password"
+                required
+            >
+
+            <label for="confirm_password">Confirm Password</label>
+            <input
+                type="password"
+                id="confirm_password"
+                name="confirm_password"
+                autocomplete="new-password"
+                required
+            >
+
+            <button type="submit" class="signup-btn">
+                Create Account
+            </button>
+        </form>
+
+        <p class="bottom-link">
+            <a href="/">← Back to Home</a>
+        </p>
+    </div>
+</body>
+</html>
